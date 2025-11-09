@@ -8,6 +8,12 @@ import json
 #for geolocations
 import requests
 from urllib.parse import quote  # for URL encoding the address string
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MAPBOX_TOKEN: str = os.getenv("MAPBOX_TOKEN")
 
 router = APIRouter()
 
@@ -24,8 +30,18 @@ async def receive_sms(request: Request):
     try:
         data = json.loads(body)
         lat_str, lon_str = data["coords"].split(",")
-        lat = float(lat_str.strip())
-        lon = float(lon_str.strip())
+
+        if lat_str == NULL or lon_str == NULL:
+            # perform geocoding
+            geocoded = geocode_address(data["location"])
+            if geocoded is None:
+                return {"status": "error", 
+                        "message": "Could not geocode address"}
+            lat, lon = geocoded
+        
+        lat = float(lat)
+        lon = float(lon)
+        
         incident = Incident(
             id=f"INC{uuid.uuid4().hex[:6].upper()}",
             type=data["type"],
@@ -44,19 +60,10 @@ async def receive_sms(request: Request):
         return {"status": "success",
                 "id": incident.id}
     except (json.JSONDecodeError, ValidationError) as e:
-        #consider putting something in db about how someone from sender number couldnt make it through
         return {"status": "error", 
                 "message": "Invalid or malformed JSON"}
-    
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-MAPBOX_TOKEN: str = os.getenv("MAPBOX_TOKEN")
 
 def geocode_address(address: str):
-
     # Construct the API URL for forward geocoding
     # URL-encode the address to handle spaces and special characters
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{quote(address)}.json"
