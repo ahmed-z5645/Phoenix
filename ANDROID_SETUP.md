@@ -61,8 +61,23 @@ You should see the ADB version. If not, restart your terminal.
 
 Or from command line:
 ```powershell
+# First, find your AVD name:
+emulator -list-avds
+
+# Then start it (replace YourAVDName with actual name):
 emulator -avd YourAVDName
 ```
+
+**Note:** If `emulator` command doesn't work, use the full path:
+```powershell
+$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe -list-avds
+$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe -avd YourAVDName
+```
+
+**Or use Android Studio Device Manager** (easier):
+1. Open Android Studio
+2. Tools → Device Manager
+3. Click ▶️ play button next to your AVD
 
 ### Step 6: Run the App
 

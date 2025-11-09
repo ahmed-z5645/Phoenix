@@ -1,4 +1,4 @@
-package com.helloworld;
+package com.phoenix;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -13,7 +13,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "HelloWorld";
+    return "Phoenix";
   }
 
   /**
@@ -30,3 +30,4 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
 }
+
