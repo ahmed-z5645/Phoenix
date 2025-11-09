@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert, Clipboard } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import HelpRequestDetailsCard from '../components/HelpRequestDetailsCard';
 import NewRequestButton from '../components/NewRequestButton';
 import NewRequestModal from '../components/NewRequestModal';
 import UserProfileStrip from '../components/UserProfileStrip';
+import HelperInfoModal, { HelperInfo } from '../components/HelperInfoModal';
+import JSONDisplayModal from '../components/JSONDisplayModal';
 
 export interface HelpRequest {
   id: string;
@@ -93,6 +95,11 @@ const DisasterMapScreen: React.FC = () => {
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isHelperModalVisible, setIsHelperModalVisible] = useState(false);
+  const [isJSONModalVisible, setIsJSONModalVisible] = useState(false);
+  const [currentJSONData, setCurrentJSONData] = useState('');
+  const [selectedRequestForHelp, setSelectedRequestForHelp] = useState<HelpRequest | null>(null);
+  const [helperDataList, setHelperDataList] = useState<HelperInfo[]>([]);
   const [initialRegion] = useState<Region>({
     latitude: 37.78825,
     longitude: -122.4324,
@@ -144,8 +151,37 @@ const DisasterMapScreen: React.FC = () => {
   };
 
   const handleHelpPress = (request: HelpRequest) => {
-    console.log('User will help with request:', request.id);
+    // Store the request and show the helper info modal
+    setSelectedRequestForHelp(request);
+    setIsHelperModalVisible(true);
+  };
+
+  const handleHelperInfoSubmit = (helperData: HelperInfo) => {
+    // Store the helper data as JSON
+    const helperDataJSON = JSON.stringify(helperData, null, 2);
+    console.log('Helper Data (JSON):', helperDataJSON);
+    
+    // Add to the list of helpers
+    const updatedList = [...helperDataList, helperData];
+    setHelperDataList(updatedList);
+    
+    // Set the JSON data and show the JSON modal
+    setCurrentJSONData(helperDataJSON);
+    setIsHelperModalVisible(false);
+    setIsJSONModalVisible(true);
+    
+    // Close the help request card
     setSelectedRequest(null);
+    setSelectedRequestForHelp(null);
+  };
+
+  const handleCopyJSON = () => {
+    Clipboard.setString(currentJSONData);
+    Alert.alert('Copied!', 'JSON data has been copied to clipboard. You can now paste it in messages.');
+  };
+
+  const getLocationString = (request: HelpRequest): string => {
+    return `${request.latitude.toFixed(6)}, ${request.longitude.toFixed(6)}`;
   };
 
   const handleNewRequestSubmit = (formData: {
@@ -211,6 +247,23 @@ const DisasterMapScreen: React.FC = () => {
         visible={isModalVisible}
         onSubmit={handleNewRequestSubmit}
         onClose={() => setIsModalVisible(false)}
+      />
+
+      <HelperInfoModal
+        visible={isHelperModalVisible}
+        location={selectedRequestForHelp ? getLocationString(selectedRequestForHelp) : ''}
+        onSubmit={handleHelperInfoSubmit}
+        onClose={() => {
+          setIsHelperModalVisible(false);
+          setSelectedRequestForHelp(null);
+        }}
+      />
+
+      <JSONDisplayModal
+        visible={isJSONModalVisible}
+        jsonData={currentJSONData}
+        onClose={() => setIsJSONModalVisible(false)}
+        onCopy={handleCopyJSON}
       />
     </View>
   );
