@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 
 class Incident(BaseModel):
     id: str = Field(..., description="Unique incident ID")
-    id: str = Field(..., description="Unique incident ID")
     type: str
     name: str
     location: str

@@ -22,10 +22,7 @@ async def receive_sms(request: Request):
         body = body.replace("\u2028", " ").replace("\u2029", " ").strip()
 
     try:
-        print("-2")
         data = json.loads(body)
-        print("-1")
-        print(data)
         lat_str, lon_str = data["coords"].split(",")
         lat = float(lat_str.strip())
         lon = float(lon_str.strip())
@@ -38,20 +35,12 @@ async def receive_sms(request: Request):
             lon=lon,
             status=data["status"]
         )
-        print("0")
-        print(incident)
-        print("1")
-        print("2")
-        print("3")
-        print(incident)
         incident_dict = incident.dict()
         # Convert datetime to ISO string
         if "created_at" in incident_dict:
             incident_dict["created_at"] = incident_dict["created_at"].isoformat()
 
         response = supabase.table("incidents").insert(incident_dict).execute()
-        print("4")
-        print(response)
         return {"status": "success",
                 "id": incident.id}
     except (json.JSONDecodeError, ValidationError) as e:
