@@ -26,14 +26,22 @@ async def receive_sms(request: Request):
         data = json.loads(body)
         print("-1")
         print(data)
-        incident = Incident(**data)
+        lat_str, lon_str = data["coords"].split(",")
+        lat = float(lat_str.strip())
+        lon = float(lon_str.strip())
+        incident = Incident(
+            id=f"INC{uuid.uuid4().hex[:6].upper()}",
+            type=data["type"],
+            name=data["name"],
+            location=data["location"],
+            lat=lat,
+            lon=lon,
+            status=data["status"]
+        )
         print("0")
         print(incident)
         print("1")
-        print(incident)
-        incident.id = f"INC{uuid.uuid4().hex[:6].upper()}"
         print("2")
-        print(incident.id)
         print("3")
         print(incident)
         response = supabase.table("incidents").insert(incident.dict()).execute()

@@ -7,6 +7,7 @@ class Incident(BaseModel):
     type: str
     name: str
     location: str
-    coords: str
+    lat: float
+    lon: float
     status: str
     timestamp: datetime = datetime.utcnow()
