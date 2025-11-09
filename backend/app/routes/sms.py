@@ -112,9 +112,6 @@ async def receive_sms(request: Request):
 
             # NEED TO SEARCH DB FOR ALL APPLICABLE REPONDERS AND SEND THEM A TEXT
 
-            # Initialize client
-            
-
             # Send a message
             client.messages.create(
                 body="Thank you for your report. Help has been notified",

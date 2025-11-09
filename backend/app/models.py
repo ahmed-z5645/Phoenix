@@ -11,3 +11,14 @@ class Incident(BaseModel):
     lon: float
     status: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Helper(BaseModel):
+    id: str = Field(..., description="Unique helper ID")
+    phone: str
+    name: str
+    location: str
+    occupation: str  # FR or C
+    lat: float
+    lon: float
+    report_count: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
