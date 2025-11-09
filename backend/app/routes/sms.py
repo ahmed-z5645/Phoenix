@@ -22,6 +22,7 @@ async def receive_sms(request: Request):
         body = body.replace("\u2028", " ").replace("\u2029", " ").strip()
 
     try:
+        print("-2")
         data = json.loads(body)
         print("-1")
         print(data)
