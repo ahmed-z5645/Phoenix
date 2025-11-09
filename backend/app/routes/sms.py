@@ -14,7 +14,8 @@ async def receive_sms(request: Request):
     form = await request.form()
     print(form)
     body = form.get("Body")
-    sender = form.get("From")
+    print(body)
+    # sender = form.get("From")
 
     try:
         data = json.loads(body)
