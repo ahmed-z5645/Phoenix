@@ -17,6 +17,9 @@ async def receive_sms(request: Request):
     print(body)
     # sender = form.get("From")
 
+    if body:
+        body = body.replace("\u2028", " ").replace("\u2029", " ").strip()
+        
     try:
         data = json.loads(body)
         incident = Incident(**data) #unpacking i'm lowkey goated at python (sorry judges im not concieted, im just excited)
