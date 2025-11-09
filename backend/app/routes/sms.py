@@ -9,7 +9,10 @@ router = APIRouter()
 @router.post("/sms")
 async def receive_sms(request: Request):
     # get form from Twilio!
+    print(request)
+    print("HELPPPPPPPP")
     form = await request.form()
+    print(form)
     body = form.get("Body")
     sender = form.get("From")
 
