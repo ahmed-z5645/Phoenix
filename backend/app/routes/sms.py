@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 from app.models import Incident
 from app.database import supabase
 from pydantic import ValidationError
+import uuid
 import json
 
 router = APIRouter()
@@ -19,10 +20,14 @@ async def receive_sms(request: Request):
 
     if body:
         body = body.replace("\u2028", " ").replace("\u2029", " ").strip()
-        
+
     try:
         data = json.loads(body)
-        incident = Incident(**data) #unpacking i'm lowkey goated at python (sorry judges im not concieted, im just excited)
+        print("-1")
+        print(data)
+        incident = Incident(**data)
+        print("0")
+        print(incident)
         print("1")
         print(incident)
         incident.id = f"INC{uuid.uuid4().hex[:6].upper()}"
