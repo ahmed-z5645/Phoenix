@@ -44,7 +44,12 @@ async def receive_sms(request: Request):
         print("2")
         print("3")
         print(incident)
-        response = supabase.table("incidents").insert(incident.dict()).execute()
+        incident_dict = incident.dict()
+        # Convert datetime to ISO string
+        if "timestamp" in incident_dict:
+            incident_dict["timestamp"] = incident_dict["timestamp"].isoformat()
+
+        response = supabase.table("incidents").insert(incident_dict).execute()
         print("4")
         print(response)
         return {"status": "success",
