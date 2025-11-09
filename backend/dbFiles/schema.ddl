@@ -1,9 +1,9 @@
 create table incidents (
-  id text primary key,
+  id text primary key default 'INC' || lpad(floor(random()*100000)::text, 5, '0'),
   type text not null,
   name text,
   location text,
   coords text,
   status text,
-  timestamp timestamptz default now()
+  created_at timestamp default now()
 );
