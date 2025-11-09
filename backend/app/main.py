@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from app.routes import sms, incidents
 app = FastAPI(title="Phoenix Centralized Server")
 
 # sms stuff
