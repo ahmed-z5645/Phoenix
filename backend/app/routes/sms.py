@@ -5,6 +5,10 @@ from pydantic import ValidationError
 import uuid
 import json
 
+#for geolocations
+import requests
+from urllib.parse import quote  # for URL encoding the address string
+
 router = APIRouter()
 
 @router.post("/sms")
@@ -43,3 +47,35 @@ async def receive_sms(request: Request):
         #consider putting something in db about how someone from sender number couldnt make it through
         return {"status": "error", 
                 "message": "Invalid or malformed JSON"}
+    
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MAPBOX_TOKEN: str = os.getenv("MAPBOX_TOKEN")
+
+def geocode_address(address: str):
+
+    # Construct the API URL for forward geocoding
+    # URL-encode the address to handle spaces and special characters
+    url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{quote(address)}.json"
+    params = {"access_token": MAPBOX_TOKEN}
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raise an error for bad status codes (4xx/5xx)
+    except requests.RequestException as e:
+        # If the HTTP request failed or returned an error status, log and return None
+        print(f"Geocoding request failed: {e}")
+        return None
+ 
+    data = response.json()
+    features = data.get("features")
+    if not features:
+        # No results found for the address
+        return None
+ 
+    # Extract the first result's coordinates.
+    # Mapbox returns [longitude, latitude], so unpack accordingly.
+    lon, lat = features[0]["center"]
+    return (lat, lon)
